@@ -1,0 +1,16 @@
+1. Many To Many
+- Add xong User sau đó thêm các Authority cho User:
+    o := orm.NewOrm()
+    user.Id = id
+    m2m := o.QueryM2M(&user, "Authorities")
+    _, err = m2m.Add(user.Authorities[0])
+    // Với "Authorities" là tên field trong bảng User. Truy vấn này đúng cho cả trường hợp ngược (Add Authority xong add Users)
+
+- Load xong User sau đó load thêm các Authority cho User:
+   if _, err = o.LoadRelated(user, "Authorities"); err != nil && err != orm.ErrNoRows {
+   			glog.Errorf("Query User LoadRelated Authorities error: %s", err.Error())
+   		}
+   // Với "Authorities" là tên field trong bảng User. Truy vấn này đúng cho cả trường hợp ngược (Authority load related users)
+
+
+2. Chỉnh path gọi api đăng nhập, thêm email vào thông tin đăng nhập; Tự động đăng nhập lên server nếu trình duyệt đã đăng nhập fb trước đó.
