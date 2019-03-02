@@ -39,6 +39,48 @@ func AddUser(m *User) (id int64, err error) {
 	return
 }
 
+func CreateOrUpdate(fb *FaceBookUser) (res *User, err error) {
+	m := &User{
+		Name:       fb.Name,
+		FirstName:  fb.FirstName,
+		LastName:   fb.LastName,
+		Email:      fb.Email,
+		ImageUrl:   fb.Picture.Data.Url,
+		FacebookId: fb.Id,
+	}
+	o := orm.NewOrm()
+	var u User
+	if err = o.QueryTable(new(User)).Filter("email", m.Email).Filter("facebook_id", m.FacebookId).One(&u); err != nil {
+		// Insert
+		if id, err := o.Insert(m); err != nil {
+			glog.Errorf("Insert new User with facebook_id=%s error: %s", m.FacebookId, err.Error())
+			return nil, err
+		} else {
+			glog.Infof("Insert new User with facebook_id=%s success", m.FacebookId)
+			m.Id = id
+			return m, nil
+		}
+	} else {
+		// Update existing User
+		if userNotChange(m, &u) {
+			glog.Info("User info not change...")
+		} else {
+			m.Id = u.Id
+			if n, err := o.Update(m); err != nil {
+				glog.Errorf("Update User with facebook_id=%s error: ", m.FacebookId, err.Error())
+				return nil, err
+			} else {
+				glog.Infof("Update %v row(s) User with facebook_id=%s success", n, m.FacebookId)
+			}
+		}
+		return m, nil
+	}
+}
+
+func userNotChange(a, b *User) bool {
+	return a.Name == b.Name && strings.Split(a.ImageUrl, "&")[0] == strings.Split(b.ImageUrl, "&")[0]
+}
+
 // GetUserById retrieves User by Id. Returns error if
 // Id doesn't exist
 func GetUserById(id int64) (v *User, err error) {

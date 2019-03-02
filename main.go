@@ -67,18 +67,6 @@ func testAddAuthority() {
 }
 
 func testAddUser() {
-	au := models.Authority{Id: constant.RoleAdminId}
-	user := models.User{Id: 0, Login: "dunghv", Authorities: []*models.Authority{&au}}
-	id, err := models.AddUser(&user)
-	if err != nil {
-		glog.Errorf("Add user error: %s", err.Error())
-	}
-
-	o := orm.NewOrm()
-	user.Id = id
-	m2m := o.QueryM2M(&user, "Authorities")
-	_, err = m2m.Add(user.Authorities[0])
-	if err != nil {
-		glog.Errorf("Add m2m error: %s", err.Error())
-	}
+	//au := models.Authority{Id: constant.RoleAdminId}
+	//user := models.User{Login: "dunghavan", Email: "dunghavan@gmail.com", FacebookId: "12345", Authorities: []*models.Authority{&au}}
 }

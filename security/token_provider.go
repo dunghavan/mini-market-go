@@ -5,12 +5,15 @@ import (
 	"errors"
 	"github.com/astaxie/beego/context"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/segmentio/ksuid"
+	"log"
 	"mini-market-go/models"
 	"strings"
+	"time"
 )
 
 type User struct {
-	UserId      string              `json:"userId"`
+	UserId      int64               `json:"userId"`
 	Authorities []*models.Authority `json:"authorities"`
 	FacebookId  string              `json:"facebookId"`
 }
@@ -68,4 +71,28 @@ func GetTokenFromStrAuthorization(token string) (string, error) {
 		return token[7:], nil
 	}
 	return token, nil
+}
+
+func CreateUserToken(u *models.User, provider string) string {
+	// Embed Custom information to `token`
+	tokenId := ksuid.New().String()
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), &JwtCustomClaims{
+		StandardClaims: jwt.StandardClaims{
+			Id:        tokenId,
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+		},
+		Principle: PrincipleClaims{
+			User: &User{
+				UserId:      u.Id,
+				Authorities: u.Authorities,
+			},
+		},
+	})
+	// token -> string. Only server knows this secret (foobar).
+	strToken, err := token.SignedString([]byte(beego.AppConfig.String("JwtUserSecret")))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return strToken
 }
