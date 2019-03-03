@@ -52,6 +52,13 @@ func router() {
 				},
 			),
 		),
+		beego.NSNamespace("/images",
+			beego.NSInclude(
+				&controllers.ImageController{
+					Controller: beego.Controller{},
+				},
+			),
+		),
 	)
 	beego.AddNamespace(nsapi)
 }
