@@ -31,9 +31,6 @@ func VerifyRequest(ctx *context.Context) error {
 	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/accounts/authenticate") {
 		return nil
 	}
-	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/accounts") {
-		return nil
-	}
 	if strings.HasPrefix(ctx.Input.URL(), "core/v1/images/upload") {
 		return nil
 	}
@@ -51,7 +48,7 @@ func VerifyToken(ctx *context.Context) error {
 	}
 	token, _ := GetTokenFromStrAuthorization(strAuthorization)
 	if claims, err := ParseToken(token); err == nil {
-		ctx.Input.SetData("user", claims.Principle.User)
+		ctx.Input.SetData("user", claims)
 		return nil
 	} else {
 		return err
@@ -101,4 +98,22 @@ func CreateUserToken(u *models.User, provider string) string {
 	}
 
 	return strToken
+}
+
+func GetCurrentUser(c *beego.Controller) (*User, error) {
+	u := c.Ctx.Input.GetData("user").(*JwtCustomClaims)
+	if u == nil {
+		return nil, errors.New("auth.error.missing.principal")
+	}
+
+	return u.Principle.User, nil
+}
+
+func GetCurrentUserId(c *beego.Controller) (int64, error) {
+	u, err := GetCurrentUser(c)
+	if u == nil || err != nil {
+		return -1, errors.New("auth.error.missing.principal")
+	}
+
+	return u.UserId, nil
 }

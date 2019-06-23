@@ -20,7 +20,7 @@ type AccountController struct {
 func (c *AccountController) Authenticate() {
 	var l models.LoginVM
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &l); err == nil {
-		glog.Infof("User login with email=%s", l.Email)
+		glog.Infof("User login with fbId=%s", l.FBId)
 		if res, status := service.GetFacebookInfo(l.FBToken); status == http.StatusOK {
 			var fbUser models.FaceBookUser
 			if err = json.Unmarshal(res, &fbUser); err == nil {
@@ -40,6 +40,22 @@ func (c *AccountController) Authenticate() {
 		}
 	} else {
 		c.CustomAbort(http.StatusBadRequest, "account.login.error.invaliddata")
+	}
+	c.ServeJSON()
+}
+
+// @router / [get]
+func (c *AccountController) GetAccount() {
+	userId, err := security.GetCurrentUserId(&c.Controller)
+	if err != nil {
+		glog.Infof("get current user id err: %s", err.Error())
+		c.CustomAbort(http.StatusBadRequest, "accounts.get.error.get-current-user-error")
+	}
+	if user, err := models.GetUserById(userId); err != nil {
+		glog.Error("Get user by id err: %s", err.Error())
+		c.CustomAbort(http.StatusBadRequest, "accounts.get.error.get-user-by-id-error")
+	} else {
+		c.Data["json"] = user
 	}
 	c.ServeJSON()
 }

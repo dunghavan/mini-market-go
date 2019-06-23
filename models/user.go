@@ -64,10 +64,10 @@ func CreateOrUpdate(fb *FaceBookUser) (res *User, err error) {
 		}
 	} else {
 		// Update existing User
+		m.Id = u.Id
 		if userNotChange(m, &u) {
 			glog.Info("User info not change...")
 		} else {
-			m.Id = u.Id
 			if n, err := o.Update(m); err != nil {
 				glog.Errorf("Update User with facebook_id=%s error: ", m.FacebookId, err.Error())
 				return nil, err
