@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -23,7 +24,22 @@ func initAuthorities() {
 	models.AddAuthority(&au)
 }
 
+func setDBToUTF8() {
+	o := orm.NewOrm()
+	userFields := []string{"name", "first_name", "last_name"}
+	for _, field := range userFields {
+		queryStr := fmt.Sprintf("alter table user modify %s varchar(128) character SET utf8;", field)
+		_, err := o.Raw(queryStr).Exec()
+		if err != nil {
+			glog.Errorf("Change column %s to UTF-8 err: %s", field, err.Error())
+		}
+	}
+}
+
 func init() {
+	flag.Parse()
+	flag.Lookup("logtostderr").Value.Set("true")
+
 	driverName := "mysql"
 	orm.RegisterDriver(driverName, orm.DRMySQL)
 	conf := beego.AppConfig.String("MySQLConnConfig")
@@ -35,6 +51,7 @@ func init() {
 		glog.Errorf("Run sync database error: %s", err.Error())
 	}
 	initAuthorities()
+	setDBToUTF8()
 }
 
 func main() {

@@ -20,7 +20,7 @@ type User struct {
 	LastName    string       `orm:"column(last_name);size(128);null" json:"lastName"`
 	Email       string       `orm:"column(email);size(128);null" json:"email"`
 	Phone       string       `orm:"column(phone);size(128);null" json:"phone"`
-	ImageUrl    string       `orm:"column(image_url);size(128);null" json:"imageUrl"`
+	ImageUrl    string       `orm:"column(image_url);size(255);null" json:"imageUrl"`
 	Activated   bool         `orm:"column(activated);null" json:"activated"`
 	CreatedDate time.Time    `orm:"column(created_date);size(128);null" json:"createdDate"`
 	FacebookId  string       `orm:"column(facebook_id);size(128);null" json:"facebookId"`
@@ -41,12 +41,14 @@ func AddUser(m *User) (id int64, err error) {
 
 func CreateOrUpdate(fb *FaceBookUser) (res *User, err error) {
 	m := &User{
-		Name:       fb.Name,
-		FirstName:  fb.FirstName,
-		LastName:   fb.LastName,
-		Email:      fb.Email,
-		ImageUrl:   fb.Picture.Data.Url,
-		FacebookId: fb.Id,
+		Name:        fb.Name,
+		FirstName:   fb.FirstName,
+		LastName:    fb.LastName,
+		Email:       fb.Email,
+		ImageUrl:    fb.Picture.Data.Url,
+		FacebookId:  fb.Id,
+		CreatedDate: time.Now().Add(7 * time.Hour),
+		Activated:   true,
 	}
 	o := orm.NewOrm()
 	var u User
