@@ -1,8 +1,8 @@
 package security
 
 import (
-	"beego"
 	"errors"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/segmentio/ksuid"

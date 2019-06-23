@@ -25,13 +25,16 @@ func init() {
 func AddAuthority(m *Authority) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
-	if err == nil {
-		m.Id = id
-		m2m := o.QueryM2M(m, "Users")
-		if _, err = m2m.Add(m.Users[0]); err != nil {
-			glog.Errorf("Add m2m users err: %s", err.Error())
-		}
+	if err != nil {
+		glog.Errorf("Insert authority err: %s", err.Error())
 	}
+	//if err == nil {
+	//	m.Id = id
+	//	m2m := o.QueryM2M(m, "Users")
+	//	if _, err = m2m.Add(m.Users[0]); err != nil {
+	//		glog.Errorf("Add m2m users err: %s", err.Error())
+	//	}
+	//}
 	return
 }
 
