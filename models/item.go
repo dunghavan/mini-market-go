@@ -11,17 +11,17 @@ import (
 )
 
 type Item struct {
-	Id          int64  `orm:"auto"`
-	Name        string `orm:"size(255);null"`
-	Desc        string `orm:"size(255);null"`
-	Price       float64
-	IsAvailable bool
-	DeliveryWay string `orm:"size(255);null"`
-	Address     string `orm:"size(255);null"`
-	Note        string `orm:"size(255);null"`
-	State       bool
-	Phone       string    `orm:"size(128);null"`
-	CreatedDate time.Time `orm:"type(time_stamp);auto_now;null"`
+	Id          int64     `orm:"column(id);auto"`
+	Name        string    `orm:"column(name);size(255);null" json:"name"`
+	Desc        string    `orm:"column(desc);size(255);null" json:"desc"`
+	Price       float64   `orm:"column(price);default(0)" json:"price"`
+	IsAvailable bool      `orm:"column(is_available);default(true)" json:"isAvailable"`
+	DeliveryWay string    `orm:"column(delivery_way);size(255);null" json:"deliveryWay"`
+	Address     string    `orm:"column(address);size(255);null" json:"address"`
+	Note        string    `orm:"column(note);size(255);null" json:"note"`
+	State       bool      `orm:"column(state);default(true)" json:"state"`
+	Phone       string    `orm:"column(phone);size(128);null" json:"phone"`
+	CreatedDate time.Time `orm:"column(created_date);type(time_stamp);auto_now;null"`
 }
 
 func init() {

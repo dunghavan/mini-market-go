@@ -10,8 +10,8 @@ import (
 )
 
 type Type struct {
-	Id   int64  `orm:"auto" json:"id"`
-	Name string `orm:"size(128)" json:"name"`
+	Id   int64  `orm:"column(id);auto" json:"id"`
+	Name string `orm:"column(name);size(128)" json:"name"`
 }
 
 func init() {
