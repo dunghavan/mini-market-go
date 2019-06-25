@@ -21,7 +21,9 @@ type Item struct {
 	Note        string    `orm:"column(note);size(255);null" json:"note"`
 	State       bool      `orm:"column(state);default(true)" json:"state"`
 	Phone       string    `orm:"column(phone);size(128);null" json:"phone"`
-	CreatedDate time.Time `orm:"column(created_date);type(time_stamp);auto_now;null"`
+	CreatedDate time.Time `orm:"column(created_date);type(time_stamp);auto_now;null" json:"createdDate"`
+	Type        *Type     `orm:"column(type);rel(fk);null;on_delete(set_null)" json:"type"`
+	User        *User     `orm:"column(user);rel(fk);null;on_delete(set_null)" json:"user"`
 }
 
 func init() {
