@@ -59,6 +59,13 @@ func router() {
 				},
 			),
 		),
+		beego.NSNamespace("/items",
+			beego.NSInclude(
+				&controllers.ItemController{
+					Controller: beego.Controller{},
+				},
+			),
+		),
 	)
 	beego.AddNamespace(nsapi)
 }

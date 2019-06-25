@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"mini-market-go/models"
+	"mini-market-go/security"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -33,7 +35,12 @@ func (c *ItemController) URLMapping() {
 // @router / [post]
 func (c *ItemController) Post() {
 	var v models.Item
-	json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err != nil {
+		c.CustomAbort(http.StatusBadRequest, "item.create.error.invalid-body")
+	}
+	v.Id = 0
+	userId, _ := security.GetCurrentUserId(&c.Controller)
+	v.User = &models.User{Id: userId}
 	if _, err := models.AddItem(&v); err == nil {
 		c.Ctx.Output.SetStatus(201)
 		c.Data["json"] = v
