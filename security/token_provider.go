@@ -31,7 +31,7 @@ func VerifyRequest(ctx *context.Context) error {
 	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/accounts/authenticate") {
 		return nil
 	}
-	if strings.HasPrefix(ctx.Input.URL(), "core/v1/images/upload") {
+	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/images/upload") {
 		return nil
 	}
 	return VerifyToken(ctx)
