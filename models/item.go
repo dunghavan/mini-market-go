@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"github.com/golang/glog"
 	"reflect"
 	"strings"
 	"time"
@@ -24,6 +25,7 @@ type Item struct {
 	CreatedDate time.Time `orm:"column(created_date);type(time_stamp);auto_now;null" json:"createdDate"`
 	Type        *Type     `orm:"column(type);rel(fk);null;on_delete(set_null)" json:"type"`
 	User        *User     `orm:"column(user);rel(fk);null;on_delete(set_null)" json:"user"`
+	Images      []*Image  `orm:"-" json:"images"` // For response to client
 }
 
 func init() {
@@ -105,6 +107,12 @@ func GetAllItem(query map[string]string, fields []string, sortby []string, order
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
 			for _, v := range l {
+				imgs, err := GetImageByItemId(int(v.Id))
+				if err != nil {
+					glog.Errorf("Get all item relate to images err: %s", err.Error())
+				} else {
+					v.Images = imgs
+				}
 				ml = append(ml, v)
 			}
 		} else {
@@ -122,6 +130,10 @@ func GetAllItem(query map[string]string, fields []string, sortby []string, order
 		return ml, total, nil
 	}
 	return nil, 0, err
+}
+
+func GetImage() {
+
 }
 
 // UpdateItem updates Item by Id and returns error if
