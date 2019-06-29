@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"mini-market-go/models"
 	"mini-market-go/security"
 	"net/http"
@@ -69,6 +70,11 @@ func (c *ItemController) GetOne() {
 	c.ServeJSON()
 }
 
+// @router /get-by-customer [get]
+func (c *ItemController) Search() {
+	c.GetAll()
+}
+
 // GetAll ...
 // @Title Get All
 // @Description get Item
@@ -123,11 +129,12 @@ func (c *ItemController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllItem(query, fields, sortby, order, offset, limit)
+	l, total, err := models.GetAllItem(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
 		c.Data["json"] = l
+		c.Ctx.Output.Header("X-Total-Count", fmt.Sprintf("%v", total))
 	}
 	c.ServeJSON()
 }

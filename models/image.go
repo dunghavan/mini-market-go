@@ -40,6 +40,14 @@ func GetImageById(id int64) (v *Image, err error) {
 	return nil, err
 }
 
+func GetImageByItemId(itemId int) (images []*Image, err error) {
+	o := orm.NewOrm()
+	if err = o.QueryTable(new(Image)).Filter("item", itemId).RelatedSel().One(&images); err == nil {
+		return images, nil
+	}
+	return nil, err
+}
+
 // DeleteImage deletes Image by Id and returns error if
 // the record to be deleted doesn't exist
 func DeleteImage(id int64) (err error) {

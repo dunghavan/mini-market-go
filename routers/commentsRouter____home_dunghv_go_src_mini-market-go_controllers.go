@@ -27,6 +27,15 @@ func init() {
 
 	beego.GlobalControllerRouter["mini-market-go/controllers:ImageController"] = append(beego.GlobalControllerRouter["mini-market-go/controllers:ImageController"],
 		beego.ControllerComments{
+			Method:           "GetByItemId",
+			Router:           `/get-by-item-id/:itemId`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
+	beego.GlobalControllerRouter["mini-market-go/controllers:ImageController"] = append(beego.GlobalControllerRouter["mini-market-go/controllers:ImageController"],
+		beego.ControllerComments{
 			Method:           "Upload",
 			Router:           `/upload`,
 			AllowHTTPMethods: []string{"post"},
@@ -75,6 +84,15 @@ func init() {
 			Method:           "Delete",
 			Router:           `/:id`,
 			AllowHTTPMethods: []string{"delete"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
+	beego.GlobalControllerRouter["mini-market-go/controllers:ItemController"] = append(beego.GlobalControllerRouter["mini-market-go/controllers:ItemController"],
+		beego.ControllerComments{
+			Method:           "Search",
+			Router:           `/get-by-customer`,
+			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
 			Filters:          nil,
 			Params:           nil})

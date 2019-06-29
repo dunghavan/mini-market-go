@@ -11,7 +11,7 @@ import (
 )
 
 type Item struct {
-	Id          int64     `orm:"column(id);auto"`
+	Id          int64     `orm:"column(id);auto" json:"id"`
 	Name        string    `orm:"column(name);size(255);null" json:"name"`
 	Desc        string    `orm:"column(desc);size(255);null" json:"desc"`
 	Price       float64   `orm:"column(price);default(0)" json:"price"`
@@ -52,7 +52,7 @@ func GetItemById(id int64) (v *Item, err error) {
 // GetAllItem retrieves all Item matches certain condition. Returns empty list if
 // no records exist
 func GetAllItem(query map[string]string, fields []string, sortby []string, order []string,
-	offset int64, limit int64) (ml []interface{}, err error) {
+	offset int64, limit int64) (ml []interface{}, total int64, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Item))
 	// query k=v
@@ -73,7 +73,7 @@ func GetAllItem(query map[string]string, fields []string, sortby []string, order
 				} else if order[i] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return nil, 0, errors.New("Error: Invalid order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
@@ -87,16 +87,16 @@ func GetAllItem(query map[string]string, fields []string, sortby []string, order
 				} else if order[0] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return nil, 0, errors.New("Error: Invalid order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
 		} else if len(sortby) != len(order) && len(order) != 1 {
-			return nil, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
+			return nil, 0, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
 		}
 	} else {
 		if len(order) != 0 {
-			return nil, errors.New("Error: unused 'order' fields")
+			return nil, 0, errors.New("Error: unused 'order' fields")
 		}
 	}
 
@@ -118,9 +118,10 @@ func GetAllItem(query map[string]string, fields []string, sortby []string, order
 				ml = append(ml, m)
 			}
 		}
-		return ml, nil
+		total, _ := qs.Count()
+		return ml, total, nil
 	}
-	return nil, err
+	return nil, 0, err
 }
 
 // UpdateItem updates Item by Id and returns error if
