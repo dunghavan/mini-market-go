@@ -34,6 +34,14 @@ func setDBToUTF8() {
 			glog.Errorf("Change column %s to UTF-8 err: %s", field, err.Error())
 		}
 	}
+	itemFields := []string{"name", "desc", "delivery_way", "address", "note"}
+	for _, field := range itemFields {
+		queryStr := fmt.Sprintf("alter table item modify `%s` varchar(255) character SET utf8;", field)
+		_, err := o.Raw(queryStr).Exec()
+		if err != nil {
+			glog.Errorf("Change column %s to UTF-8 err: %s", field, err.Error())
+		}
+	}
 }
 
 func init() {

@@ -46,6 +46,7 @@ func GetItemById(id int64) (v *Item, err error) {
 	o := orm.NewOrm()
 	v = &Item{Id: id}
 	if err = o.QueryTable(new(Item)).Filter("Id", id).RelatedSel().One(v); err == nil {
+		v.Images, _ = GetImageByItemId(int(v.Id))
 		return v, nil
 	}
 	return nil, err

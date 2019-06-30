@@ -42,7 +42,7 @@ func GetImageById(id int64) (v *Image, err error) {
 
 func GetImageByItemId(itemId int) (images []*Image, err error) {
 	o := orm.NewOrm()
-	if err = o.QueryTable(new(Image)).Filter("item", itemId).One(&images); err == nil {
+	if _, err = o.QueryTable(new(Image)).Filter("item", itemId).All(&images); err == nil {
 		for _, im := range images {
 			im.Item = nil
 		}

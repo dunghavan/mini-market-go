@@ -34,6 +34,9 @@ func VerifyRequest(ctx *context.Context) error {
 	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/images/upload") {
 		return nil
 	}
+	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/items/get-by-customer") {
+		return nil
+	}
 	return VerifyToken(ctx)
 }
 
