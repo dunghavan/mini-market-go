@@ -28,8 +28,6 @@ type JwtCustomClaims struct {
 }
 
 func VerifyRequest(ctx *context.Context) error {
-	//glog.Infof("URL: %s", ctx.Input.URL())
-	isGet := ctx.Input.IsGet()
 	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/accounts/authenticate") {
 		return nil
 	}
@@ -42,7 +40,10 @@ func VerifyRequest(ctx *context.Context) error {
 	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/items/get-by-customer") {
 		return nil
 	}
-	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/items") && isGet {
+	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/types") && ctx.Input.IsGet() {
+		return nil
+	}
+	if strings.HasPrefix(ctx.Input.URL(), "/core/v1/items") && ctx.Input.IsGet() {
 		return nil
 	}
 	return VerifyToken(ctx)

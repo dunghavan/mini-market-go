@@ -66,6 +66,13 @@ func router() {
 				},
 			),
 		),
+		beego.NSNamespace("/types",
+			beego.NSInclude(
+				&controllers.TypeController{
+					Controller: beego.Controller{},
+				},
+			),
+		),
 	)
 	beego.AddNamespace(nsapi)
 }
